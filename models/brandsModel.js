@@ -1,39 +1,18 @@
 const mongoose = require("mongoose");
 
-const ThemeSchema = new mongoose.Schema({
-  color: { type: String, default: "#000000" },
-  logo: { type: String, required: false } 
-});
-
-const BrandSchema = new mongoose.Schema(
-  {
-    name: {
-      type: String,
-      required: true,
-      trim: true
-    },
-    slug: {
-      type: String,
-      required: true,
-      unique: true,
-      lowercase: true,
-      trim: true
-    },
-    theme: {
-      type: ThemeSchema,
-      default: {}
-    },
-    is_active: {
-      type: Boolean,
-      default: true
-    }
+const BrandSchema = new mongoose.Schema({
+  name: { 
+    type: String,
+    required: true 
   },
-  {
-    timestamps: { createdAt: "created_at", updatedAt: "updated_at" }
-  }
-);
+  slug: { type: String, unique: true, required: true, lowercase: true },
+  description: { type: String },
+  theme: { type: Object, default: {} }, 
+  isActive: { type: Boolean, default: true },
+}, { timestamps: true });
 
 module.exports = mongoose.model("Brand", BrandSchema);
+
 
 
 

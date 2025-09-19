@@ -1,26 +1,47 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
+const { Schema } = mongoose;
 
-const AttributionRulesSchema = new mongoose.Schema({
-  window_days: { type: Number, default: 7 }, 
-  frequency_cap: { type: Number, default: 0 }, 
-  cooldown_hours: { type: Number, default: 0 }
-});
-
-const SponsorSchema = new mongoose.Schema(
-  {
-    name: { type: String, required: true, trim: true },
-    campaign_id: { type: String, required: true, unique: true },
-    deeplink: { type: String, required: true },
-    hmac_secret: { type: String, required: true }, 
-    attribution_rules: { type: AttributionRulesSchema, default: {} },
-    is_active: { type: Boolean, default: true }
+const SponsorSchema = new Schema({
+  name: { 
+    type: String, 
+    required: true 
   },
-  {
-    timestamps: { createdAt: "created_at", updatedAt: "updated_at" }
-  }
-);
+  campaign_id: { type: String },
+  deeplink: { type: String },
+  domains_allowed: [{ type: String }], 
+  hmac_secret_kms_ref: { 
+    type: String, 
+    default: null 
+  }, 
+  attribution_rules: { 
+    type: Schema.Types.Mixed, 
+    default: {} 
+  },
+  is_active: { 
+    type: Boolean, 
+    default: true 
+  },
+  caps: {
+    daily_per_user: { type: Number, default: 1 },
+    weekly_per_user: { type: Number, default: 3 }
+  },
+  metadata: { 
+    type: Schema.Types.Mixed, 
+    default: {} }
+}, { timestamps: true });
 
-module.exports = mongoose.model("Sponsor", SponsorSchema);
+module.exports = mongoose.model('Sponsor', SponsorSchema);
+
+
+
+
+
+
+
+
+
+
+
 
 
 

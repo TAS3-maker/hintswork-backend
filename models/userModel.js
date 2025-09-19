@@ -1,71 +1,50 @@
 const mongoose = require("mongoose");
 
-const TrophySchema = new mongoose.Schema({
-  trophy_id: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Trophy",
-    required: true
+const UserSchema = new mongoose.Schema({
+  name: { 
+    type: String, 
+    required: true, 
+    trim: true
+   },
+  email: { 
+    type: String, 
+    trim: true, 
+    lowercase: true, 
+    unique: true, 
+    sparse: true 
   },
-  awarded_at: {
-    type: Date,
-    default: Date.now
-  }
-});
-
-const PointsSchema = new mongoose.Schema({
-  value: { type: Number, required: true },        
-  reason: { type: String },                         
-  balance_after: { type: Number, required: true },  
-  created_at: { type: Date, default: Date.now }
-});
-
-const userSchema = new mongoose.Schema(
-  {
-    email: {
-      type: String,
-      unique: true,
-      sparse: true,
-      lowercase: true,
-      trim: true
-    },
-    phone: {
-      type: String,
-      unique: true,
-      sparse: true
-    },
-    password_hash: {
-      type: String,
-      required: true
-    },
-    lang: {
-      type: String,
-      enum: ["en-IN", "hi-IN"],
-      default: "en-IN"
-    },
-    notif_prefs: {
-      daily_time: { type: String, default: "08:00" },
-      quiet_hours: { type: Boolean, default: false }
-    },
-    status: {
-      type: String,
-      enum: ["active", "suspended", "deleted"],
-      default: "active"
-    },
-    streak_days: {
-      type: Number,
-      default: 0
-    },
-    trophies: [TrophySchema],
-
-   
-    points_balance: [PointsSchema]
+  phone: { 
+    type: String, 
+    trim: true, 
+    unique: true, 
+    sparse: true 
   },
-  {
-    timestamps: { createdAt: "created_at", updatedAt: "updated_at" }
-  }
-);
+  passwordHash: { 
+    type: String, 
+    default: null
+   }, 
+  lang: { 
+    type: String,
+     default: "en-IN"
+   },
+  notifPrefs: { 
+    type: Object, 
+    default: {} 
+  },
+  status: { 
+    type: String, 
+    enum: ["active", "suspended", "deleted"], 
+    default: "active" 
+  },
+  brandScope: [{ type: mongoose.Schema.Types.ObjectId, ref: "Brand" }],
+  consent: {
+    marketing: { type: Boolean, default: false },
+    acceptedAt: { type: Date }
+  },
+}, { timestamps: true });
 
-module.exports = mongoose.model("User", userSchema);
+module.exports = mongoose.model("User", UserSchema);
+
 
 
 

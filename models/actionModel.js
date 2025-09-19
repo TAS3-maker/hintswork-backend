@@ -1,54 +1,50 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
+const { Schema } = mongoose;
 
-const ActionSchema = new mongoose.Schema(
-  {
-    user_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true
-    },
-    hint_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "HintBundle.steps", 
-      required: true
-    },
-    bundle_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "HintBundle",
-      required: true
-    },
-    step: {
-      type: String,
-      enum: ["hint", "hint_plus", "hint_pp"],
-      required: true
-    },
-    type: {
-      type: String,
-      enum: ["complete", "skip", "snooze", "click"],
-      required: true
-    },
-    source: {
-      type: String,
-      enum: ["app", "push", "web"],
-      default: "app"
-    },
-    meta: {
-      type: Object,
-      default: {}
-    },
-    occurred_at: {
-      type: Date,
-      default: Date.now
-    }
+
+const ActionSchema = new Schema({
+  user: { 
+    type: Schema.Types.ObjectId, 
+    ref: 'User', 
+    required: true, 
+    index: true 
   },
-  {
-    timestamps: { createdAt: "created_at", updatedAt: "updated_at" }
+  hint: { 
+    type: Schema.Types.ObjectId, 
+    ref: 'Hint', 
+    required: true, 
+    index: true 
+  },
+  bundle: { 
+    type: Schema.Types.ObjectId, 
+    ref: 'HintBundle' 
+  },
+  step: { 
+    type: String, 
+    enum: ['hint','hint_plus','hint_pp'], 
+    required: true 
+  },
+  type: { 
+    type: String, 
+    enum: ['complete','snooze','skip','click'], 
+    required: true 
+  },
+  source: { 
+    type: String, 
+    enum: ['app','push','web'], 
+    default: 'app' 
+  },
+  meta: { 
+    type: Schema.Types.Mixed, 
+    default: {} 
+  }, 
+  occurred_at: { 
+    type: Date, 
+    default: Date.now 
   }
-);
+}, { timestamps: true });
 
 
-ActionSchema.index({ user_id: 1, occurred_at: -1 });
-ActionSchema.index({ hint_id: 1 });
-ActionSchema.index({ bundle_id: 1 });
-
-module.exports = mongoose.model("Action", ActionSchema);
+ActionSchema.index({ user: 1, occurred_at: -1 });
+ActionSchema.index({ user: 1, hint: 1, step: 1, occurred_at: 1 });
+module.exports = mongoose.model('Action', ActionSchema);

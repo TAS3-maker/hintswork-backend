@@ -1,44 +1,16 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
+const { Schema } = mongoose;
 
-const AwardSchema = new mongoose.Schema(
-  {
-    user_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true
-    },
-    sponsor_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Sponsor",
-      required: true
-    },
-    hint_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "HintBundle",
-      required: true
-    },
-    type: {
-      type: String,
-      enum: ["coupon", "credit", "other"],
-      required: true
-    },
-    value: {
-      type: Object, 
-      required: true
-    },
-    awarded_at: {
-      type: Date,
-      default: Date.now
-    }
-  },
-  {
-    timestamps: { createdAt: "created_at", updatedAt: "updated_at" }
-  }
-);
+const AwardSchema = new Schema({
+  user: { type: Schema.Types.ObjectId, ref: 'User', required: true, index: true },
+  sponsor: { type: Schema.Types.ObjectId, ref: 'Sponsor', required: false },
+  hint: { type: Schema.Types.ObjectId, ref: 'Hint' },
+  type: { type: String, enum: ['coupon','credit','other'], default: 'other' },
+  value: { type: Schema.Types.Mixed, default: {} }, 
+  awarded_at: { type: Date, default: Date.now },
+  status: { type: String, enum: ['pending','confirmed','failed'], default: 'pending' },
+  metadata: { type: Schema.Types.Mixed }
+});
 
-
-AwardSchema.index({ user_id: 1, awarded_at: -1 });
-AwardSchema.index({ sponsor_id: 1 });
-AwardSchema.index({ hint_id: 1 });
-
-module.exports = mongoose.model("Award", AwardSchema);
+AwardSchema.index({ user: 1, awarded_at: -1 });
+module.exports = mongoose.model('Award', AwardSchema);
